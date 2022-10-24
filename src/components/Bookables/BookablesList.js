@@ -2,9 +2,18 @@ import React, {useState, Fragment} from "react";
 import data from "../../static.json";
 import {FaArrowRight} from "react-icons/fa";
 
+import reducer from "./reducer";
+
+const {bookables, days, sessions} = data; 
+const initialState = {
+    group: "Rooms",
+    bookableIndex: 0,
+    hasDetails: true,
+    bookables
+}
+
 export default function BookablesList() {
 
-    const {bookables, days, sessions} = data; 
     const [group, setGroup] = useState("Kit");
     const bookablesInGroup = bookables.filter(b => b.group === group);
     const [bookableIndex, setBookableIndex] = useState(0);
@@ -12,6 +21,11 @@ export default function BookablesList() {
 
     const bookable = bookablesInGroup[bookableIndex];
     const [hasDetails, setHasDetails] = useState(false);
+
+    function changeGroup(event) {
+        setGroup(event.target.value);
+        setBookableIndex(0);
+    }
 
     function nextBookable() {
         setBookableIndex(i => (i+1) % bookablesInGroup.length);
