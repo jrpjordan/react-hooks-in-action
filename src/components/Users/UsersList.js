@@ -1,11 +1,22 @@
-import React, {Fragment, useState} from "react";
-import data from "../../static.json";
+import React, {Fragment, useState, useEffect} from "react";
+import {FaSpinner} from "react-icons/fa";
+
 
 export default function UsersList() {
 
-    const {users} = data;
-    const [userIndex, setUserIndex] = useState(1);
-    const user = users[userIndex];
+    const [users, setUsers] = useState(null);
+    const [userIndex, setUserIndex] = useState(0);
+    const user = users?.[userIndex];
+
+    useEffect(() => {
+        fetch("http://localhost:3001/users")
+            .then((resp) => resp.json())
+            .then(data => setUsers(data));
+    },[]);
+
+    if (users === null) {
+        return <FaSpinner className="icon-loading"/>
+    }
 
     return (
     <Fragment>
