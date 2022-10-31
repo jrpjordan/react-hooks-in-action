@@ -31,12 +31,12 @@ export default function BookablesList() {
         getData("http://localhost:3001/bookables")
             .then((bookables) => {
                 dispatch({
-                    action: "FETCH_BOOKABLES_SUCCESS",
+                    type: "FETCH_BOOKABLES_SUCCESS",
                     payload: bookables} )
             })
             .catch((error) => {
                 dispatch({
-                    action: "FETCH_BOOKABLES_ERROR",
+                    type: "FETCH_BOOKABLES_ERROR",
                     payload: error
                 })
             });
@@ -73,7 +73,8 @@ export default function BookablesList() {
     }
 
     if (isLoading) {
-        return <p>
+        return 
+        <p>
             <FaSpinner className="icon-loading"/>{" "}
             Loading bookables...
         </p>
