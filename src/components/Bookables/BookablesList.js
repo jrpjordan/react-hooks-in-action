@@ -1,4 +1,4 @@
-import React, {useReducer, Fragment, useEffect} from "react";
+import React, {useReducer, Fragment, useEffect, useRef} from "react";
 import data from "../../static.json";
 import {FaArrowRight, FaSpinner} from "react-icons/fa";
 
@@ -12,18 +12,21 @@ const initialState = {
     hasDetails: true,
     bookables: [],
     isLoading: true,
-    error: false
+    error: false,
+    isPresenting: false
 }
 
 export default function BookablesList() {
 
     const [state, dispatch] = useReducer(reducer, initialState);
-    const {group, bookableIndex, hasDetails, bookables, isLoading, error} = state;
+    const {group, bookableIndex, hasDetails, bookables, isLoading, error, isPresenting} = state;
 
     const bookablesInGroup = bookables.filter(b => b.group === group);
     const groups = [...new Set(bookables.map(b => b.group))];
 
     const bookable = bookablesInGroup[bookableIndex];
+
+    const timerRef = useRef(null);
 
     useEffect(() => {
         dispatch({type: "FETCH_BOOKABLES_REQUEST"});
@@ -40,13 +43,26 @@ export default function BookablesList() {
                     payload: error
                 })
             });
-    },[])
+    },[]);
+
+    useEffect(() => {
+        if (isPresenting) {
+            scheduleNext();
+        } else {
+            clearNextTimeout();
+        }
+    });
 
     function changeGroup(event) {
         dispatch({
             type: "SET_GROUP",
              payload: event.target.value
             });
+            
+        if (isPresenting) {
+            clearNextTimeout();
+            scheduleNext();
+        }
     }
 
     function changeBookable(selectedIndex) {
@@ -58,7 +74,8 @@ export default function BookablesList() {
 
     function nextBookable() {
         dispatch({
-            type: "NEXT_BOOKABLE"
+            type: "NEXT_BOOKABLE",
+            payload: false
         });
     }
 
@@ -78,6 +95,23 @@ export default function BookablesList() {
             <FaSpinner className="icon-loading"/>{" "}
             Loading bookables...
         </p>
+    }
+
+    function scheduleNext() {
+        if (timerRef.current === null) {
+            timerRef.current = setTimeout(() => {
+                timerRef.current = null;
+                dispatch({
+                    type: "NEXT_BOOKABLE",
+                    payload: true
+                })
+            }, 3000)
+        }
+    }
+
+    function clearNextTimeout() {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
     }
 
     return (

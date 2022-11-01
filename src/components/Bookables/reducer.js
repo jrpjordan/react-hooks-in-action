@@ -11,7 +11,8 @@ export default function reducer(state, action) {
         case "SET_BOOKABLE":
             return {
                 ...state,
-                bookableIndex: action.payload
+                bookableIndex: action.payload,
+                isPresenting: false
             };
 
         case "TOOGLE_HAS_DETAILS":
@@ -24,7 +25,8 @@ export default function reducer(state, action) {
             const count = state.bookables.filter(b => b.group === state.group).length;
             return {
                 ...state,
-                bookableIndex: (state.bookableIndex + 1) % count
+                bookableIndex: (state.bookableIndex + 1) % count,
+                isPresenting: action.payload
             };
 
         case "FETCH_BOOKABLES_REQUEST":
@@ -40,7 +42,8 @@ export default function reducer(state, action) {
                 ...state,
                 isLoading: false,
                 error: false,
-                bookables: action.payload
+                bookables: action.payload,
+                isPresenting: true
             };
 
         case "FETCH_BOOKABLES_ERROR":
